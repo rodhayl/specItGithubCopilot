@@ -1,0 +1,30 @@
+name: Feature Request
+description: Suggest an improvement or new capability
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem are you trying to solve?
+      placeholder: It is difficult to reuse template variables across workflow phases.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe your preferred approach
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternatives or workarounds evaluated?
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected Impact
+      description: Who benefits and how?

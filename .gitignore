@@ -1,0 +1,58 @@
+# Build output
+out/
+dist/
+out-test/
+build/
+
+# Dependencies
+node_modules/
+
+# Package artifacts
+*.vsix
+*.tgz
+
+# Logs and reports
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+report.*.json
+
+# Test artifacts
+coverage/
+.nyc_output/
+jest.json
+jest-out*.txt
+jest-output*.txt
+test-output*.txt
+test-results*.json
+
+# Local state and archives
+ARCHIVED/
+audit.json
+err.txt
+.docu/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE/editor
+.vscode/
+.vscode-test/
+.idea/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional caches
+.cache/
+.parcel-cache/
+.eslintcache
