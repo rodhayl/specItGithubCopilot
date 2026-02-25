@@ -1,0 +1,510 @@
+{
+  "name": "vscode-docu-extension",
+  "displayName": "Docu - AI Documentation Assistant",
+  "description": "A VS Code extension that provides AI-powered documentation assistance through GitHub Copilot Chat with specialized agents for requirements gathering, design, and implementation planning.",
+  "version": "0.3.0",
+  "publisher": "docu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rodhayl/specItGithubCopilot"
+  },
+  "bugs": {
+    "url": "https://github.com/rodhayl/specItGithubCopilot/issues"
+  },
+  "homepage": "https://github.com/rodhayl/specItGithubCopilot#readme",
+  "author": {
+    "name": "rodhayl"
+  },
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "preview": true,
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "extensionDependencies": [
+    "github.copilot-chat"
+  ],
+  "categories": [
+    "Other",
+    "Documentation",
+    "AI"
+  ],
+  "keywords": [
+    "vscode",
+    "extension",
+    "documentation",
+    "ai",
+    "copilot",
+    "chat",
+    "requirements",
+    "design"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:workbench.action.chat.open",
+    "onView:workbench.panel.chat"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "docu",
+        "name": "docu",
+        "fullName": "Docu Assistant",
+        "description": "AI-powered documentation assistant for requirements gathering, design, and implementation planning",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "help",
+            "description": "Show help and available commands"
+          },
+          {
+            "name": "new",
+            "description": "Create a new document"
+          },
+          {
+            "name": "agent",
+            "description": "Manage AI agents"
+          },
+          {
+            "name": "templates",
+            "description": "Manage document templates"
+          }
+        ],
+        "disambiguation": [
+          {
+            "category": "documentation",
+            "description": "The user wants to create, manage, or improve software documentation such as PRDs, requirements documents, architecture designs, or implementation plans.",
+            "examples": [
+              "Create a PRD for my app",
+              "Help me write requirements for a new feature",
+              "Generate a technical specification document",
+              "I need to document my API endpoints",
+              "Write an architecture design document",
+              "Help me gather requirements for a new project"
+            ]
+          },
+          {
+            "category": "agents",
+            "description": "The user wants to use or manage AI documentation agents for requirements gathering, PRD creation, or solution architecture.",
+            "examples": [
+              "Start the requirements gathering agent",
+              "Use the PRD creator agent",
+              "List available documentation agents",
+              "Set the solution architect agent"
+            ]
+          }
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "docu.openSettings",
+        "title": "Open Settings",
+        "category": "Docu",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "docu.showDiagnostics",
+        "title": "Show Diagnostics",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.exportDiagnostics",
+        "title": "Export Diagnostics",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.showOutput",
+        "title": "Show Output Channel",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.test",
+        "title": "Test Extension",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.clearLogs",
+        "title": "Clear Logs",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.toggleDebug",
+        "title": "Toggle Debug Mode",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.checkOfflineStatus",
+        "title": "Check Offline Mode Status",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.forceOfflineCheck",
+        "title": "Force Model Availability Check",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.toggleOfflineMode",
+        "title": "Toggle Offline Mode",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.startDebugServer",
+        "title": "Start Debug Server",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.stopDebugServer",
+        "title": "Stop Debug Server",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.debugExecuteCommand",
+        "title": "Execute Debug Command",
+        "category": "Docu"
+      },
+      {
+        "command": "docu.debugServerStatus",
+        "title": "Debug Server Status",
+        "category": "Docu"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "docu.settingsView",
+          "name": "Docu Settings",
+          "type": "webview",
+          "contextualTitle": "Docu Configuration"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "docu.openSettings",
+          "when": "view == docu.settingsView",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "docu.openSettings",
+          "title": "Docu: Open Settings"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Docu - AI Documentation Assistant",
+      "properties": {
+        "docu.defaultDirectory": {
+          "type": "string",
+          "default": "docs",
+          "description": "Default directory for creating new documents",
+          "scope": "workspace"
+        },
+        "docu.defaultAgent": {
+          "type": "string",
+          "default": "prd-creator",
+          "enum": [
+            "prd-creator",
+            "brainstormer",
+            "requirements-gatherer",
+            "solution-architect",
+            "specification-writer",
+            "quality-reviewer"
+          ],
+          "description": "Default agent to use when the extension starts",
+          "scope": "workspace"
+        },
+        "docu.preferredModel": {
+          "type": "string",
+          "default": "",
+          "description": "Preferred language model to use for AI requests (leave empty for automatic selection)",
+          "scope": "workspace"
+        },
+        "docu.templateDirectory": {
+          "type": "string",
+          "default": ".vscode/docu/templates",
+          "description": "Directory containing user-defined templates (relative to workspace root)",
+          "scope": "workspace"
+        },
+        "docu.agentConfigDirectory": {
+          "type": "string",
+          "default": ".vscode/docu",
+          "description": "Directory containing agent configuration files",
+          "scope": "workspace"
+        },
+        "docu.autoSaveDocuments": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save documents when they are created or updated",
+          "scope": "workspace"
+        },
+        "docu.showWorkflowProgress": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show workflow progress and phase transitions in chat responses",
+          "scope": "workspace"
+        },
+        "docu.enableHotReload": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically reload agent configurations and templates when files change",
+          "scope": "workspace"
+        },
+        "docu.reviewLevel": {
+          "type": "string",
+          "default": "normal",
+          "enum": [
+            "light",
+            "normal",
+            "strict"
+          ],
+          "description": "Default review level for document quality checks",
+          "scope": "workspace"
+        },
+        "docu.maxFilesInSummary": {
+          "type": "number",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Maximum number of files to process in summary and catalog operations",
+          "scope": "workspace"
+        },
+        "docu.enableDebugLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug logging for troubleshooting",
+          "scope": "workspace"
+        },
+        "docu.debug.offlineMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug logging for offline mode detection",
+          "scope": "workspace"
+        },
+        "docu.offline.forceMode": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "online",
+            "offline"
+          ],
+          "description": "Force online/offline mode for testing (auto = automatic detection)",
+          "scope": "workspace"
+        },
+        "docu.offline.checkInterval": {
+          "type": "number",
+          "default": 60,
+          "minimum": 10,
+          "maximum": 300,
+          "description": "Interval in seconds between model availability checks",
+          "scope": "workspace"
+        },
+        "docu.offline.maxRetries": {
+          "type": "number",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Maximum number of retry attempts for model availability checks",
+          "scope": "workspace"
+        },
+        "docu.offline.skipStartupCheck": {
+          "type": "boolean",
+          "default": false,
+          "description": "Skip model availability check during extension startup (models will be checked on first use)",
+          "scope": "workspace"
+        },
+        "docu.debug.port": {
+          "type": "number",
+          "default": 19229,
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Port for the debug HTTP server (localhost only). Used for remote command execution.",
+          "scope": "workspace"
+        },
+        "docu.debug.autoStart": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically start the debug server when the extension activates",
+          "scope": "workspace"
+        },
+        "docu.autoChat.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable auto-chat mode for seamless conversation flow after agent commands",
+          "scope": "workspace"
+        },
+        "docu.autoChat.timeoutMinutes": {
+          "type": "number",
+          "default": 30,
+          "minimum": 5,
+          "maximum": 120,
+          "description": "Auto-chat session timeout in minutes",
+          "scope": "workspace"
+        },
+        "docu.autoChat.enableDocumentUpdates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically update document files during conversations",
+          "scope": "workspace"
+        },
+        "docu.autoChat.showProgressIndicators": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show document update progress during conversations",
+          "scope": "workspace"
+        },
+        "docu.autoChat.enableAfterAgentSet": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically enable chat mode after setting an agent",
+          "scope": "workspace"
+        },
+        "docu.autoChat.enableAfterDocumentCreation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically enable chat mode after creating documents with --with-conversation flag",
+          "scope": "workspace"
+        },
+        "docu.logging.level": {
+          "type": "string",
+          "default": "info",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "none"
+          ],
+          "description": "Logging level for the extension",
+          "scope": "workspace"
+        },
+        "docu.logging.enableConsole": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable console logging",
+          "scope": "workspace"
+        },
+        "docu.logging.enableOutputChannel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable output channel logging",
+          "scope": "workspace"
+        },
+        "docu.logging.enableFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable file logging",
+          "scope": "workspace"
+        },
+        "docu.logging.maxLogEntries": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 100,
+          "maximum": 10000,
+          "description": "Maximum number of log entries to keep in memory",
+          "scope": "workspace"
+        },
+        "docu.logging.categories": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "enum": [
+              "extension",
+              "agent",
+              "tool",
+              "template",
+              "command",
+              "error",
+              "security"
+            ]
+          },
+          "description": "Log categories to include (empty array means all categories)",
+          "scope": "workspace"
+        },
+        "docu.telemetry.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable telemetry collection (respects VS Code telemetry settings)",
+          "scope": "workspace"
+        },
+        "docu.telemetry.collectUsageData": {
+          "type": "boolean",
+          "default": true,
+          "description": "Collect usage data for improving the extension",
+          "scope": "workspace"
+        },
+        "docu.telemetry.collectPerformanceData": {
+          "type": "boolean",
+          "default": true,
+          "description": "Collect performance data for optimization",
+          "scope": "workspace"
+        },
+        "docu.telemetry.collectErrorData": {
+          "type": "boolean",
+          "default": true,
+          "description": "Collect error data for debugging",
+          "scope": "workspace"
+        },
+        "docu.telemetry.anonymizeData": {
+          "type": "boolean",
+          "default": true,
+          "description": "Anonymize collected telemetry data",
+          "scope": "workspace"
+        },
+        "docu.telemetry.maxEvents": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 100,
+          "maximum": 5000,
+          "description": "Maximum number of telemetry events to keep in memory",
+          "scope": "workspace"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "tsc -p ./ --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:vscode": "vscode-test",
+    "test:conversation-flow": "jest --testPathPatterns=\"(CommandConversationFlow|ConversationErrorHandling|OnlineOfflineConversation)\" --verbose",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "postinstall": "node scripts/patch-vsce.js"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.97.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.7.1",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1",
+    "glob": "^10.4.5",
+    "diff": "^5.2.0"
+  }
+}
