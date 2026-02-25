@@ -497,7 +497,7 @@
     "@vscode/vsce": "^3.7.1",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6",
-    "typescript": "^5.7.3"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
