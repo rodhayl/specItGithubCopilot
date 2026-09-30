@@ -1,339 +1,263 @@
-# Docu - AI Documentation Assistant
+# Docu: Guided Documentation Workflows in VS Code
 
-[![VS Code](https://img.shields.io/badge/VS%20Code-1.97%2B-blue.svg)](https://code.visualstudio.com/)
-[![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-required-brightgreen.svg)](https://github.com/features/copilot)
 [![CI](https://github.com/rodhayl/specItGithubCopilot/actions/workflows/ci.yml/badge.svg)](https://github.com/rodhayl/specItGithubCopilot/actions/workflows/ci.yml)
+[![VS Code](https://img.shields.io/badge/VS%20Code-1.97%2B-blue.svg)](https://code.visualstudio.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
-[![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)](CHANGELOG.md)
 
-A VS Code extension that provides AI-powered documentation assistance through GitHub Copilot Chat. Docu helps you create, manage, and evolve high-quality software documentation using specialized AI agents and guided workflows — from initial product ideas through to detailed technical specifications.
+**Status: Preview extension, v0.3.0.** Build from source and package as a VSIX using the instructions below. AI-assisted workflows require GitHub Copilot Chat and an available language model.
 
----
+Docu turns product ideas into editable documentation inside VS Code. Six specialist agents guide product requirements, brainstorming, requirements gathering, architecture, implementation specifications, and review. Conversations, templates, and workspace files connect these steps so you can refine a document without moving between a chat window and a separate authoring tool.
 
-## Features
+This repository, `specItGithubCopilot`, contains the Docu extension. Its engineering focus is conversational document workflows: agent routing, session state, template rendering, and Markdown file updates through VS Code's Chat Participant and Language Model APIs.
 
-- **Six Specialized AI Agents** — Each agent is tailored for a specific documentation phase: PRD, brainstorming, requirements, architecture, specification, and quality review
-- **Smart Templates** — Built-in and fully customizable templates for every document type
-- **Guided Workflow** — Structured progression from concept (PRD) through requirements, design, and implementation
-- **Slash Commands** — Powerful command system (`/new`, `/agent`, `/templates`, `/review`, `/update`) for quick document operations
-- **Natural-Language Sessions** — Start iterative document workflows with plain text; no slash commands required
-- **Security and Privacy** — Workspace isolation, path validation, and input sanitization on all operations
-- **Offline Support** — Graceful degradation when AI features are unavailable
+## What you can do
 
----
+- Start a document from a plain-language request or a slash command
+- Refine the same document across conversation turns
+- Switch between six documentation roles and track workflow phases
+- Use built-in templates or add workspace-specific templates
+- Create, open, and update Markdown documents in the workspace
+- Run document review and inspect diagnostics while you work
 
-## Quick Start
+Generated content needs human review. Check requirements, technical decisions, and file changes before relying on them.
 
-### Prerequisites
+## Quick start
 
-- VS Code **1.97.0** or higher
-- GitHub Copilot (with Chat) — active subscription required
+### Requirements
 
-### Installation
+- VS Code **1.97.0 or later**, as declared in [package.json](package.json)
+- GitHub Copilot Chat installed and enabled, with access to a compatible chat model
+- An open workspace folder where Docu can create documents
+- Git, Node.js, and npm for building from source; repository CI uses **Node.js 20**
 
-Install from the `.vsix` file or build from source:
+### Build and install
 
 ```bash
 git clone https://github.com/rodhayl/specItGithubCopilot.git
 cd specItGithubCopilot
-npm install
+npm ci
 npm run compile
+npm run package
 ```
 
-Then in VS Code: **Extensions** -> `...` -> **Install from VSIX** -> select the built `.vsix` file.
+`npm run package` creates the VSIX; compilation alone does not. In VS Code, run **Extensions: Install from VSIX...** from the Command Palette and select the generated file. With the current package name and version, the filename is `vscode-docu-extension-0.3.0.vsix`.
 
-See [docs/installation.md](docs/installation.md) for full details.
+Alternatively, with the VS Code command-line tool available:
 
-### First Steps
-
-1. Open GitHub Copilot Chat (`Ctrl+Shift+I` / `Cmd+Shift+I`)
-2. Type `@docu` to start interacting with the assistant
-3. Create your first document:
-
-```
-@docu /new "My Product Requirements" --template prd
+```bash
+code --install-extension vscode-docu-extension-0.3.0.vsix
 ```
 
-Or just describe what you want to build in plain language:
+Use the filename produced by your build. Some detailed guides still contain older version examples; the manifest and build output determine the current filename. See the [installation guide](docs/installation.md) for additional setup information.
 
-```
+### Create your first document
+
+1. Open a workspace folder and GitHub Copilot Chat
+2. Select an available model in the chat toolbar
+3. Send a request to `@docu`, for example:
+
+```text
 @docu I want to build a task management app with real-time collaboration
 ```
 
-Docu will classify the intent, assign the right specialist agent, create an initial draft on disk (e.g. `docs/prd/task-management-app.md`), open the file, and ask a focused follow-up question to continue refining the document naturally.
+The natural-language session classifies the request, starts a draft, opens the document, and asks a follow-up question. Continue replying to refine the same file. Type `done`, `finish`, or `/done` to close the session.
 
----
+For an explicit template-based start:
 
-## Core Concepts
-
-### AI Agents
-
-Six specialized agents cover the full documentation lifecycle:
-
-| Agent | Phase | Purpose |
-|-------|-------|---------|
-| **PRD Creator** | PRD | Initial product concept and PRD generation |
-| **Brainstormer** | PRD | Ideation and concept expansion |
-| **Requirements Gatherer** | Requirements | Systematic requirements collection (EARS format) |
-| **Solution Architect** | Design | Technical architecture and system design |
-| **Specification Writer** | Implementation | Detailed technical specifications |
-| **Quality Reviewer** | Implementation | Document validation and quality assurance |
-
-### Workflow Phases
-
-1. **PRD Phase** — Product concept and strategic goals
-2. **Requirements Phase** — Detailed business and functional requirements
-3. **Design Phase** — Technical architecture and solution decisions
-4. **Implementation Phase** — Specifications, tasks, and quality review
-
-### Document Folders
-
-By default, documents are organized under:
-
+```text
+@docu /new "My Product Requirements" --template prd
 ```
+
+Review the created file and keep changes under version control. Auto-save and conversation-driven updates are enabled by default.
+
+## Agents and workflow
+
+| Agent | Role |
+| --- | --- |
+| `prd-creator` | Product concept, goals, users, and PRD drafting |
+| `brainstormer` | Ideation and concept expansion |
+| `requirements-gatherer` | Functional and non-functional requirements, including EARS-style wording |
+| `solution-architect` | Architecture and technical design |
+| `specification-writer` | Implementation specifications and task planning |
+| `quality-reviewer` | Document checks and improvement suggestions |
+
+The workflow moves through **PRD → requirements → design → implementation planning and review**. You can select a specialist directly rather than completing every phase.
+
+Natural-language document sessions use these folders:
+
+```text
 docs/
-  prd/          <- PRD Creator, Brainstormer
-  requirements/ <- Requirements Gatherer
-  design/       <- Solution Architect
-  spec/         <- Specification Writer
-  ideas/        <- Brainstorming sessions
+  prd/
+  requirements/
+  design/
+  spec/
+  ideas/
 ```
 
----
+Other document commands support the default-directory setting or an explicit path. See the [agent guide](docs/agents.md) and [example workflows](examples/) for longer walkthroughs.
 
-## Usage Guide
+## Usage guide
 
-### Natural-Language Sessions (Recommended)
+### Documents
 
-Start a full iterative workflow with plain text — no slash command needed:
-
-```
-@docu I need to plan a REST API for a mobile banking app
-```
-
-Docu will:
-1. Classify the request and assign the appropriate agent
-2. Create an initial draft file on disk
-3. Open the file in the editor
-4. Ask one focused follow-up question per turn
-5. Update the file with each response
-
-Close the session with `done`, `finish`, or `/done`.
-
-### Slash Commands
-
-#### Create Documents
-```
-# New document with default template
+```text
 @docu /new "Document Title"
-
-# With a specific template
 @docu /new "API Docs" --template basic
-
-# With a custom path
 @docu /new "User Guide" --path docs/guides/user-guide.md
 ```
 
-#### Manage Agents
-```
-# List all available agents
+### Agents and templates
+
+```text
 @docu /agent list
-
-# Switch to a specific agent
 @docu /agent set requirements-gatherer
-
-# Show the active agent
 @docu /agent current
-```
-
-#### Manage Templates
-```
-# List all templates
 @docu /templates list
-
-# Show template details
 @docu /templates show prd
-
-# Validate a template
 @docu /templates validate my-template
 ```
 
-#### Update Documents
-```
-# Update a specific section
-@docu /update --file docs/requirements.md --section "Scope" "Updated scope text"
+### Updates and review
 
-# Append to a section
+Replace the example paths with an existing document in your workspace:
+
+```text
 @docu /update --file docs/api.md --section "Authentication" --mode append "New auth notes"
+@docu /review --file docs/requirements.md --level strict
 ```
 
-#### Review Documents
-```
-# Standard review
-@docu /review --file docs/requirements.md
+`/update` supports `replace`, `append`, and `prepend`. Review supports `light`, `normal`, and `strict` levels; its optional `--fix` flag can modify the document. Inspect the resulting diff, particularly when applying automatic fixes.
 
-# Strict review with automatic fixes
-@docu /review --file docs/design.md --level strict --fix
-```
-
-### Full Workflow Example
-
-```
-# 1. Start with a PRD
-@docu /agent set prd-creator
-@docu /new "Mobile App PRD" --template prd
-
-# 2. Brainstorm ideas
-@docu /agent set brainstormer
-
-# 3. Gather requirements
-@docu /agent set requirements-gatherer
-@docu /new "Mobile App Requirements" --template requirements
-
-# 4. Design the solution
-@docu /agent set solution-architect
-@docu /new "Mobile App Architecture"
-
-# 5. Write specifications
-@docu /agent set specification-writer
-@docu /new "Mobile App Tasks"
-
-# 6. Quality review
-@docu /agent set quality-reviewer
-@docu /review --file docs/requirements/mobile-app-requirements.md --level strict
-```
-
----
+Use `@docu /help` for available commands. The [command reference](docs/command-reference.md), [complete tutorial](docs/complete-tutorial.md), and [demo project](examples/demo-project/) provide more examples.
 
 ## Configuration
 
-Configure Docu via VS Code Settings (`Ctrl+,` -> search "docu"):
+Open VS Code Settings and search for `docu`. The complete setting definitions are in [package.json](package.json).
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `docu.defaultDirectory` | `docs` | Default directory for new documents |
-| `docu.defaultAgent` | `prd-creator` | Default agent on startup |
-| `docu.templateDirectory` | `.vscode/docu/templates` | Custom templates location |
-| `docu.autoSaveDocuments` | `true` | Auto-save created/updated documents |
-| `docu.showWorkflowProgress` | `true` | Show phase transitions in chat |
-| `docu.logging.level` | `info` | Log level (debug/info/warn/error/none) |
-| `docu.telemetry.enabled` | `true` | Enable anonymous telemetry |
-| `docu.debug.autoStart` | `false` | Auto-start local debug HTTP server |
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `docu.defaultDirectory` | `docs` | Default directory for document commands |
+| `docu.defaultAgent` | `prd-creator` | Startup agent |
+| `docu.templateDirectory` | `.vscode/docu/templates` | Workspace custom-template directory |
+| `docu.autoSaveDocuments` | `true` | Auto-save created or updated documents |
+| `docu.autoChat.enableDocumentUpdates` | `true` | Allow document updates during conversations |
+| `docu.showWorkflowProgress` | `true` | Show workflow transitions in chat |
+| `docu.logging.level` | `info` | Log level: `debug`, `info`, `warn`, `error`, or `none` |
+| `docu.telemetry.enabled` | `true` | Collect diagnostic events, subject to VS Code telemetry settings |
+| `docu.telemetry.anonymizeData` | `true` | Apply the implemented identifier hashing and redaction rules |
+| `docu.debug.autoStart` | `false` | Start the local debug HTTP server automatically |
 
-### Custom Templates
+### Custom templates
 
-Create YAML-frontmatter templates in `.vscode/docu/templates/`:
+Add a Markdown file such as `.vscode/docu/templates/my-template.md` with YAML frontmatter and template variables:
 
-```yaml
+```markdown
 ---
 id: my-template
 name: My Custom Template
-description: Template for my use case
+description: A template for project notes
 variables:
   - name: title
     description: Document title
     required: true
     type: string
-  - name: author
-    required: false
-    type: string
-    defaultValue: Unknown
-agentRestrictions:
-  - requirements-gatherer
 ---
 
 # {{title}}
 
-**Author:** {{author}}
-**Created:** {{currentDate}}
+Created: {{created}}
 
 ## Overview
 
-{{overview}}
+Add the project context here.
 ```
 
----
+See [template management](docs/template-management.md) for the template format and editing commands.
 
-## Development
+## Data, file changes, and limits
 
-### Setup
+### Workspace files and model requests
+
+Documents are written to the open workspace. AI requests use VS Code's language-model integration with GitHub Copilot and can include your prompt and document content. Review the content you provide and your applicable Copilot settings and policies before using confidential material.
+
+The source includes path checks, allowed-extension and blocked-directory rules, file-size checks, and input-sanitization helpers. These are implementation controls, not a guarantee that every input or operation is safe. Use a trusted workspace and inspect generated files and automatic changes.
+
+### Diagnostics and telemetry
+
+Diagnostic event collection is enabled by default and respects `vscode.env.isTelemetryEnabled`. The current [TelemetryManager](src/telemetry/TelemetryManager.ts) keeps events in memory and provides a JSON export; that class does not implement remote event transmission. This is separate from content sent to a language model.
+
+To disable Docu's diagnostic event collection, set:
+
+```json
+{
+  "docu.telemetry.enabled": false
+}
+```
+
+Hashing and redaction do not guarantee that logs or exported diagnostics contain no identifying or sensitive information. Review reports before sharing them. Logging has separate settings from telemetry.
+
+### When a model is unavailable
+
+The extension includes non-AI file and template operations and fallback messages. AI drafting, refinement, and model-based assistance require an available model; offline support does not provide a local language model. Availability and fallback behavior should be checked in your VS Code environment.
+
+### Troubleshooting
+
+The Command Palette includes:
+
+- **Docu: Show Diagnostics**
+- **Docu: Export Diagnostics**
+- **Docu: Show Output Channel**
+- **Docu: Toggle Debug Mode**
+- **Docu: Check Offline Mode Status**
+
+The optional debug HTTP server is a development tool with command-execution capabilities. Leave it disabled unless you need it for debugging. See the [troubleshooting guide](docs/troubleshooting.md) and [security policy](SECURITY.md).
+
+## Development and validation
 
 ```bash
-git clone https://github.com/rodhayl/specItGithubCopilot.git
-cd specItGithubCopilot
-npm install
-npm run compile
+npm run compile        # Compile TypeScript
+npm run watch          # Recompile while developing
+npm run lint           # Type-check without emitting files
+npm test               # Compile, type-check, and run Jest
+npm run test:coverage  # Run Jest with coverage reporting
+npm run package        # Package the extension as a VSIX
 ```
 
-Press **F5** in VS Code to launch the Extension Development Host.
+The [CI workflow](.github/workflows/ci.yml) installs dependencies with `npm ci`, runs TypeScript checks, and runs Jest on Node.js 20. See the CI badge for the reported result.
 
-### Repository Structure
+The repository includes unit, integration, and workflow tests. Some integration scenarios, including online/offline conversations, use mocks. A passing Jest run does not establish the behavior of every live Copilot session. Use the [testing guide](docs/testing.md) and [manual test checklist](MANUAL_TEST.md) for interactive verification in VS Code, and record the commit and test scope when sharing results.
+
+### Source map
 
 ```text
-specItGithubCopilot/
-|- src/             # TypeScript source code
-|  |- agents/       # AI agent implementations (6 agents)
-|  |- commands/     # Slash command handlers
-|  |- config/       # Configuration management
-|  |- conversation/ # Conversation state and flow
-|  |- debugging/    # Debug server (localhost only)
-|  |- llm/          # Language model integration
-|  |- templates/    # Template engine
-|  `- tools/        # Tool implementations
-|- tests/           # Jest test suite (unit + integration + e2e)
-|- docs/            # Documentation
-|- examples/        # Example projects and workflows
-`- scripts/         # Build helper scripts
+src/
+  agents/        # Specialist agents and agent selection
+  commands/      # Parsing, routing, and workflow commands
+  config/        # Settings and configuration
+  conversation/  # Sessions, state transitions, and document refinement
+  llm/           # Language-model integration and prompts
+  templates/     # Template loading and rendering
+  tools/         # File and document tools
+  security/      # Workspace and input validation helpers
+  telemetry/     # Diagnostic event collection and export
+tests/           # Jest suites and supporting mocks
+docs/            # Guides and command reference
+examples/        # Sample documents and workflows
 ```
 
-### Scripts
+## Project history
 
-```bash
-npm run compile        # TypeScript compilation
-npm test               # Run test suite
-npm run test:coverage  # Coverage report
-npm run lint           # Type checking
-npm run package        # Build VSIX
-```
+Recorded development dates to August 2025, starting from a VS Code extension scaffold and expanding into documentation agents, conversation state, templates, and file tools. The current public repository starts with a [separate initial commit dated 25 February 2026](https://github.com/rodhayl/specItGithubCopilot/commit/eb7f1a232e78414bd566a8f40843edefae797707). That date identifies this repository's initial source snapshot, rather than the start of the project's development.
 
-### Testing
+## Documentation and contributing
 
-See [docs/testing.md](docs/testing.md) for the full testing guide and [MANUAL_TEST.md](MANUAL_TEST.md) for manual verification steps.
-
----
-
-## Advanced Features
-
-### Security
-
-- **Workspace Isolation** — All file operations restricted to the current workspace
-- **Path Validation** — Prevents directory traversal attacks
-- **Input Sanitization** — Cleans potentially malicious content from all inputs
-- **Data Anonymization** — Telemetry data anonymized by default
-
-### Offline Mode
-
-When GitHub Copilot is unavailable, Docu provides:
-- Basic file operations and template processing
-- Document structure management
-- Automatic detection and graceful fallback
-
-### Diagnostics
-
-Via the Command Palette:
-- `Docu: Show Diagnostics` — System diagnostics panel
-- `Docu: Export Diagnostics` — Export diagnostic report as JSON
-- `Docu: Show Output Channel` — Extension logs
-- `Docu: Toggle Debug Mode` — Enable/disable verbose logging
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
+- [Documentation index](docs/README.md)
+- [Quick-start guide](docs/quick-start.md)
+- [Compilation guide](docs/compilation-guide.md)
+- [FAQ](docs/faq.md)
+- [Contributing guide](CONTRIBUTING.md)
+- [Report an issue](https://github.com/rodhayl/specItGithubCopilot/issues)
 
 ## License
 
-[MIT](LICENSE.md) — Copyright (c) 2026 rodhayl
+[MIT](LICENSE.md) · Copyright (c) 2026 rodhayl
